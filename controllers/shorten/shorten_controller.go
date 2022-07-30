@@ -2,6 +2,7 @@ package shorten
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/roadsigns/url-shortner/repositories"
 	"github.com/roadsigns/url-shortner/services"
 	"github.com/roadsigns/url-shortner/shortener"
 	"net/http"
@@ -16,7 +17,8 @@ func Execute(c *gin.Context) {
 	}
 
 	service := services.StoreUrl{
-		Shortener: shortener.Base62Shortener{},
+		Shortener:  shortener.Base62Shortener{},
+		Repository: repositories.CassandraUrlRepository{},
 	}
 
 	shortUrl, err := service.Save(request.Url)

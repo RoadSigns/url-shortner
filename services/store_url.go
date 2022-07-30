@@ -1,9 +1,13 @@
 package services
 
-import "github.com/roadsigns/url-shortner/shortener"
+import (
+	"github.com/roadsigns/url-shortner/repositories"
+	"github.com/roadsigns/url-shortner/shortener"
+)
 
 type StoreUrl struct {
-	Shortener shortener.Shortener
+	Shortener  shortener.Shortener
+	Repository repositories.UrlRepository
 }
 
 func (s StoreUrl) Save(longUrl string) (string, error) {
