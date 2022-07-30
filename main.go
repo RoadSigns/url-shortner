@@ -1,6 +1,8 @@
 package main
 
-import "github.com/roadsigns/url-shortner/internal/app/url-shortner/app"
+import (
+	"github.com/roadsigns/url-shortner/app"
+)
 
 func main() {
 	app.StartApp()
