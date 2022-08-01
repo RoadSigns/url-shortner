@@ -2,6 +2,7 @@ package shorten
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gocql/gocql"
 	"github.com/roadsigns/url-shortner/repositories"
 	"github.com/roadsigns/url-shortner/services"
 	"github.com/roadsigns/url-shortner/shortener"
@@ -17,13 +18,15 @@ func Execute(c *gin.Context) {
 	}
 
 	service := services.StoreUrl{
-		Shortener:  shortener.Base62Shortener{},
-		Repository: repositories.CassandraUrlRepository{},
+		Shortener: shortener.Base62Shortener{},
+		Repository: repositories.CassandraUrlRepository{
+			Cluster: gocql.NewCluster("cassandra"),
+		},
 	}
 
 	shortUrl, err := service.Save(request.Url)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "unable to store url"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 

@@ -11,9 +11,16 @@ type StoreUrl struct {
 }
 
 func (s StoreUrl) Save(longUrl string) (string, error) {
-	// Encode the long url to a shorter version
 	shortUrl := s.Shortener.Shorten(longUrl)
-	// Pass the URL to the repository
+
+	err := s.Repository.Save(repositories.UrlData{
+		LongUrl:  longUrl,
+		ShortUrl: shortUrl,
+	})
+
+	if err != nil {
+		return "", err
+	}
 
 	return shortUrl, nil
 }
