@@ -7,6 +7,7 @@ import (
 
 type UrlRepository interface {
 	Save(UrlData) error
+	Get(shortUrl string) (urlData UrlData, err error)
 }
 
 type UrlData struct {
@@ -37,4 +38,31 @@ func (r CassandraUrlRepository) Save(data UrlData) error {
 	}
 
 	return nil
+}
+
+func (r CassandraUrlRepository) Get(shortUrl string) (urlData UrlData, err error) {
+	r.Cluster.Keyspace = "urls"
+	r.Cluster.Consistency = gocql.Quorum
+	r.Cluster.ProtoVersion = 4
+	r.Cluster.ConnectTimeout = time.Second * 10
+	r.Cluster.Authenticator = gocql.PasswordAuthenticator{Username: "cassandra", Password: "cassandra"}
+	session, sessionErr := r.Cluster.CreateSession()
+	defer session.Close()
+
+	if sessionErr != nil {
+		return UrlData{}, sessionErr
+	}
+	var id gocql.UUID
+	var shorturl string
+	var longurl string
+
+	if err := session.Query(`SELECT uuid, short_url, long_url FROM urls WHERE short_url = ? LIMIT 1 ALLOW FILTERING`,
+		shortUrl).Consistency(gocql.One).Scan(&id, &shorturl, &longurl); err != nil {
+		return UrlData{}, err
+	}
+
+	return UrlData{
+		ShortUrl: shorturl,
+		LongUrl:  longurl,
+	}, nil
 }
