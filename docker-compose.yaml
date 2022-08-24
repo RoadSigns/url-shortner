@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  shortener_app:
+    build:
+      dockerfile: ./Dockerfile
+    container_name: shortener_app
+    volumes:
+      - ../../application:/app
+    ports:
+      - "8080:8080"
+    networks:
+      - shortener
+
+  shortener_db:
+    image: cassandra:4
+    container_name: shortener_db
+    hostname: cassandra
+    ports:
+      - 9042:9042
+    volumes:
+      - ~/apps/cassandra:/var/lib/cassandra
+    environment:
+      - CASSANDRA_CLUSTER_NAME=citizix
+    networks:
+      - shortener
+
+networks:
+  shortener:
