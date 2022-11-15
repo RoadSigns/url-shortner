@@ -20,7 +20,7 @@ func Execute(c *gin.Context) {
 	service := services.StoreUrl{
 		Shortener: shortener.Base62Shortener{},
 		Repository: repositories.CassandraUrlRepository{
-			Cluster: gocql.NewCluster("cassandra"),
+			Cluster: gocql.NewCluster("host.docker.internal"),
 		},
 	}
 

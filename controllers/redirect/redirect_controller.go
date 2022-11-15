@@ -13,7 +13,7 @@ func Execute(c *gin.Context) {
 
 	service := services.GetUrl{
 		Repository: repositories.CassandraUrlRepository{
-			Cluster: gocql.NewCluster("localhost"),
+			Cluster: gocql.NewCluster("host.docker.internal"),
 		},
 	}
 
